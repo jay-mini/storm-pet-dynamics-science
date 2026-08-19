@@ -1,0 +1,37 @@
+schema_version: 1
+modality: tau
+input_csv: data/authorized/tau/ot_cfm_input.csv
+output_dir: outputs/tau_ot_cfm
+parameters:
+  pipeline_mode: train_and_visualize
+  roi_mode: ctx_lh_rh
+  expected_dim: 68
+  latent_dim: 16
+  ae_hidden_width: 128
+  ae_dropout: 0.0
+  ae_epochs: 1000
+  ae_batch_size: 128
+  ae_lr: 0.001
+  ae_weight_decay: 0.0001
+  subtype_loss_weight: 0.05
+  bin_loss_weight: 0.05
+  latent_l2_weight: 0.0001
+  n_bins: 5
+  pool_assignment: same_bin_soft_subtype
+  posterior_power: 1.0
+  min_posterior: 0.1
+  min_pool_size: 5
+  cfm_iters: 5000
+  cfm_batch_size: 32
+  cfm_lr: 0.0001
+  cfm_weight_decay: 0.0001
+  cfm_sigma: 0.005
+  cfm_hidden_width: 256
+  n_eval_steps: 120
+  n_initial_samples: 32
+  trajectory_umap_backend: auto
+  umap_n_neighbors: 10
+  umap_min_dist: 0.25
+  seed: 42
+  device: auto
+  num_threads: 1

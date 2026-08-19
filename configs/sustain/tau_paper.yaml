@@ -1,0 +1,42 @@
+schema_version: 1
+model_id: tau-paper-v1
+modality: tau
+tracer: FTP
+reference_region: inferior_cerebellar_gray
+feature_map: resources/roi/tau_lobar_feature_map.yaml
+aggregation:
+  method: volume_weighted_mean
+  minimum_valid_rois: 1
+  require_positive_volume: true
+  reject_scan_if_any_feature_missing: true
+input:
+  research_group_column: Research Group
+  abeta_status_column: ABETA_GMM_LABEL_monotonic
+  allowed_research_groups: [CN, MCI, AD]
+  disease_research_groups: [MCI, AD]
+  abeta_negative_values: [0, negative]
+control:
+  research_group: CN
+  abeta_status: negative
+standardization:
+  ddof: 0
+  clip_min: -3.0
+  clip_max: 10.0
+features:
+  drop_non_increasing_disease_mean: true
+events:
+  z_scores: [2.0, 5.0]
+  terminal_zmax: 5.0
+  minimum_supporting_scans: 10
+selection:
+  selected_subtypes: 2
+  expected_stage_min: 0
+  expected_stage_max: 20
+cross_validation:
+  folds: 10
+  random_seed: 42
+training:
+  parameters_require_native_manifest_verification: true
+  startpoints: 25
+  maximum_subtypes: 2
+  mcmc_iterations: 100000

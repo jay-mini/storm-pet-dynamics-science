@@ -1,0 +1,20 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+*.py[cod]
+*.egg-info/
+
+# Authorized participant data and generated outputs stay local.
+data/authorized/
+outputs/
+
+# Native training artifacts are local by default.
+*.pickle
+*.pkl
+*.pt
+*.pth
+*.joblib
+
+# Explicit synthetic examples are versioned.
+!data/demo/*.csv
