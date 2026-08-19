@@ -1,8 +1,6 @@
 # STORM PET dynamics — scientific release
 
-This release contains the scientific Aβ/Tau pipeline only: authorized-data preparation,
-full-data z-score SuStaIn training and inference artifacts, common stage binning, and OT-CFM
-training/trajectory reconstruction.
+This release contains the scientific Aβ/Tau pipeline: authorized-data preparation, full-data z-score SuStaIn training and inference artifacts, common stage binning, and OT-CFM training and trajectory reconstruction. In addition, the companion STORM-PET web platform (www.storm-pet.xyz) provides an end-to-end interface through which users can upload compatible Aβ or tau PET data and apply the pretrained models for subtype/stage inference, trajectory prediction, and downstream dynamical analysis.
 
 ## Install
 
