@@ -1,8 +1,6 @@
 # STORM PET dynamics 科学复现包
 
-本目录只包含 Aβ/Tau 科学流程：获授权数据预处理、全数据 SuStaIn 训练与安全推理包、
-共同分箱、OT-CFM 训练和轨迹重建。网页、FastAPI、部署注册表、受试者数据、预训练权重、
-本地审计、CV pickle 和 Appendix 消融均不在公开包中。
+本目录只包含 Aβ/Tau 科学流程：获授权数据预处理、全数据 SuStaIn 训练与安全推理包、 OT-CFM 训练和轨迹重建。
 
 主流程依次运行：
 

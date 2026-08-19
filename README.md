@@ -2,9 +2,7 @@
 
 This release contains the scientific Aβ/Tau pipeline only: authorized-data preparation,
 full-data z-score SuStaIn training and inference artifacts, common stage binning, and OT-CFM
-training/trajectory reconstruction. The web application, FastAPI service, deployment registry,
-participant data, pretrained weights, local audit records, CV models, and Appendix ablations are
-deliberately absent.
+training/trajectory reconstruction.
 
 ## Install
 
@@ -16,12 +14,15 @@ python -m venv .venv
 pySuStaIn is pinned to official commit
 `708fa22d89c9692dbeafcc2c31a1c8460ced5640`. Native pickle files are training artifacts; never
 load an untrusted pickle. The inference bundle produced by this project is JSON/NumPy based and
-uses `allow_pickle=False`.
+uses `allow_pickle=False`. This repository uses pySuStaIn for subtype and stage inference. Please also cite the original SuStaIn methodology and the pySuStaIn software when using this component. Details see https://doi.org/10.1038/s41467-018-05892-0 .
 
 ## Main-text workflow
 
 1. Obtain access to the source cohort data and keep it under `data/authorized/` (ignored by Git).
-2. Prepare Aβ/Tau scan tables with `scripts/01_prepare_data.py`.
+2. Prepare Aβ/Tau scan tables with `scripts/01_prepare_data.py`. Aβ status is defined once as
+   `CENTILOIDS > 18`; values equal to 18 are negative. The output preserves the direct
+   `ABETA_CL_LABEL` and the participant-level harmonized `ABETA_CL_LABEL_monotonic` used for
+   SuStaIn control selection and Tau matching.
 3. Train the full-data SuStaIn model. The main-text configs stop at the selected two-subtype
 model, so they do not spend time training unused 3–5 subtype alternatives:
 
@@ -73,5 +74,12 @@ authorized training cohort and cannot reproduce paper estimates.
 ## Scope and release status
 
 This tree is created from an explicit allowlist and has passed a local secret/path/artifact scan.
-It is not ready to publish until the authors choose a source-code license and replace
-`LICENSE_DECISION_REQUIRED.md` with that license. See `docs/OPEN_SOURCE_CHECKLIST_CN.md`.
+The source code is released under the [MIT License](LICENSE). Please cite this software using
+[`CITATION.cff`](CITATION.cff).
+
+The MIT License applies only to the source code and documentation authored for this repository.
+It does not grant access to, redistribute, or license participant-level data, native SuStaIn
+pickle files, pretrained model weights, private deployment bundles, or web-service components.
+Those materials are not included here and remain governed by their applicable data-use agreements
+and release policies. See `DATA_AVAILABILITY.md`, `MODEL_RELEASE_POLICY.md`, and
+`docs/OPEN_SOURCE_CHECKLIST_CN.md`.

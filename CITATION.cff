@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata below."
+title: "STORM PET Dynamics: Subtype, stage, and dynamics inference of amyloid-beta and tau PET"
+type: software
+authors:
+  - family-names: "Guojie Li"
+version: 0.1.0
+date-released: 2026-08-19
+license: MIT
+abstract: "Reproducible scientific pipeline for subtype-stage inference and optimal-transport conditional flow matching of amyloid-beta and tau PET dynamics."
+keywords:
+  - amyloid-beta PET
+  - tau PET
+  - SuStaIn
+  - optimal transport
+  - conditional flow matching
+  - neuroimaging

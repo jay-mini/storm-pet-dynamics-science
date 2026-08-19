@@ -9,17 +9,19 @@ from storm_pet.exceptions import ConfigurationError
 
 DEFAULT_KEYS = ["PTID", "VISCODE", "VISCODE2"]
 DEFAULT_OPTIONAL_ABETA_COLUMNS = [
-    "ABETA_GMM_PROB",
     "SUMMARY_SUVR",
     "CENTILOIDS",
-    "AMYLOID_STATUS",
-    "ABETA_GMM_CUTOFF_SUMMARY_SUVR",
+    "ABETA_CL_THRESHOLD",
 ]
 DEFAULT_TAU_PASSTHROUGH_COLUMNS = [
     "TRACER",
     "TRACER_SUVR_WARNING",
+    "ABETA_CL_LABEL",
+    "ABETA_CL_LABEL_monotonic",
     "ABETA_MATCHED_DATE_180D",
     "ABETA_DATE_DIFF_DAYS_180D",
+    "CENTILOIDS_NEAREST_180D",
+    "ABETA_CL_THRESHOLD_NEAREST_180D",
 ]
 
 
@@ -98,7 +100,7 @@ def merge_tau_with_nearest_abeta(
     id_column: str = "PTID",
     tau_date_column: str = "SCANDATE",
     abeta_date_column: str = "SCANDATE",
-    abeta_label_column: str = "ABETA_GMM_LABEL",
+    abeta_label_column: str = "ABETA_CL_LABEL",
     optional_abeta_columns: list[str] | None = None,
 ) -> pd.DataFrame:
     """Match each Tau scan to the closest Aβ scan; an exact tie selects the earlier Aβ date."""
@@ -174,7 +176,7 @@ def merge_tau_with_nearest_abeta(
 def standardize_abeta_label_column(
     data: pd.DataFrame,
     max_difference_days: int = 180,
-    abeta_label_column: str = "ABETA_GMM_LABEL",
+    abeta_label_column: str = "ABETA_CL_LABEL",
 ) -> pd.DataFrame:
     output = data.copy()
     nearest_column = f"{abeta_label_column}_NEAREST_{max_difference_days}D"
@@ -262,7 +264,7 @@ def find_abeta_time_violations(data: pd.DataFrame, label_column: str) -> pd.Data
 
 def apply_abeta_monotonic_correction(
     data: pd.DataFrame,
-    label_column: str = "ABETA_GMM_LABEL",
+    label_column: str = "ABETA_CL_LABEL",
     date_column: str = "SCANDATE",
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     output = data.copy().reset_index(names="orig_index")
@@ -485,7 +487,7 @@ def filter_tracer(
 
 def clean_for_sustain(
     data: pd.DataFrame,
-    monotonic_label_column: str = "ABETA_GMM_LABEL_monotonic",
+    monotonic_label_column: str = "ABETA_CL_LABEL_monotonic",
     max_row_missing_suvr: int | None = 5,
     max_column_missing_rate: float | None = 0.05,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:

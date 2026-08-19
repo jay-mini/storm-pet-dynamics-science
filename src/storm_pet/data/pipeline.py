@@ -6,7 +6,13 @@ from pathlib import Path
 
 import pandas as pd
 
-from storm_pet.data.abeta_gmm import assign_abeta_status, extract_roi_suvr_columns, fit_abeta_gmm
+from storm_pet.data.abeta_status import (
+    ABETA_LABEL_COLUMN,
+    CENTILOID_COLUMN,
+    CENTILOID_THRESHOLD,
+    assign_centiloid_status,
+    extract_roi_suvr_columns,
+)
 from storm_pet.data.tau_preprocess import (
     apply_abeta_monotonic_correction,
     apply_research_group_correction,
@@ -34,12 +40,14 @@ def _read_csv(path: Path) -> pd.DataFrame:
     return pd.read_csv(path, low_memory=False)
 
 
-def prepare_abeta_gmm_stage(input_csv: Path, output_directory: Path) -> DataStageResult:
+def prepare_abeta_centiloid_stage(input_csv: Path, output_directory: Path) -> DataStageResult:
     output_directory.mkdir(parents=True, exist_ok=True)
     data = _read_csv(input_csv)
     roi_columns = extract_roi_suvr_columns(data)
-    fit = fit_abeta_gmm(data)
-    result = assign_abeta_status(data, fit)
+    result = assign_centiloid_status(data)
+    result, violations_before, violations_after, _ = apply_abeta_monotonic_correction(
+        result, label_column=ABETA_LABEL_COLUMN
+    )
     status_path = output_directory / "abeta_scan_table.csv"
     roi_path = output_directory / "abeta_roi163_table.csv"
     write_csv_atomic(status_path, result)
@@ -51,14 +59,19 @@ def prepare_abeta_gmm_stage(input_csv: Path, output_directory: Path) -> DataStag
     write_csv_atomic(roi_path, result[metadata + roi_columns])
     metrics = {
         "n_rows": len(result),
-        "n_valid_summary_suvr": int(fit.labels.notna().sum()),
-        "n_positive": int((fit.labels == 1).sum()),
-        "n_negative": int((fit.labels == 0).sum()),
-        "gmm_means": list(fit.means),
-        "gmm_standard_deviations": list(fit.standard_deviations),
-        "gmm_weights": list(fit.weights),
-        "posterior_cutoff": fit.posterior_cutoff,
-        "legacy_grid_cutoff": fit.legacy_grid_cutoff,
+        "centiloid_column": CENTILOID_COLUMN,
+        "centiloid_threshold": CENTILOID_THRESHOLD,
+        "n_valid_centiloid": int(result[ABETA_LABEL_COLUMN].notna().sum()),
+        "n_positive_direct": int((result[ABETA_LABEL_COLUMN] == 1).sum()),
+        "n_negative_direct": int((result[ABETA_LABEL_COLUMN] == 0).sum()),
+        "n_positive_monotonic": int(
+            (result[f"{ABETA_LABEL_COLUMN}_monotonic"] == 1).sum()
+        ),
+        "n_negative_monotonic": int(
+            (result[f"{ABETA_LABEL_COLUMN}_monotonic"] == 0).sum()
+        ),
+        "time_violations_before": len(violations_before),
+        "time_violations_after": len(violations_after),
         "n_roi_suvr": len(roi_columns),
     }
     metrics_path = output_directory / "data_qc.json"
@@ -99,18 +112,25 @@ def prepare_tau_stage(
     demographic = _read_csv(demographic_csv)
     tau_diagnosis = merge_diagnosis(tau, diagnosis)
     tau_abeta = merge_tau_with_nearest_abeta(
-        tau_diagnosis, abeta, max_difference_days=max_difference_days
+        tau_diagnosis,
+        abeta,
+        max_difference_days=max_difference_days,
+        abeta_label_column=ABETA_LABEL_COLUMN,
     )
     tau_abeta = standardize_abeta_label_column(
-        tau_abeta, max_difference_days=max_difference_days
+        tau_abeta,
+        max_difference_days=max_difference_days,
+        abeta_label_column=ABETA_LABEL_COLUMN,
     )
     tau_demographic = build_demographic_tau_table(tau_abeta, demographic)
     tau_demographic, group_report, _ = apply_research_group_correction(tau_demographic)
     tau_demographic, missing_group = drop_missing_research_group(tau_demographic)
     tau_monotonic, violations_before, violations_after, _ = apply_abeta_monotonic_correction(
-        tau_demographic
+        tau_demographic, label_column=ABETA_LABEL_COLUMN
     )
-    tau_clean, cleaning_report = clean_for_sustain(tau_monotonic)
+    tau_clean, cleaning_report = clean_for_sustain(
+        tau_monotonic, monotonic_label_column=f"{ABETA_LABEL_COLUMN}_monotonic"
+    )
     tau_tracer = filter_tracer(tau_clean, tracer)
 
     final_path = output_directory / "tau_scan_table.csv"
@@ -155,4 +175,3 @@ def prepare_tau_stage(
         },
     )
     return DataStageResult(final_path, manifest_path, metrics)
-

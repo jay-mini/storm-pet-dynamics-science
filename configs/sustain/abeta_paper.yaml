@@ -11,7 +11,7 @@ aggregation:
   reject_scan_if_any_feature_missing: true
 input:
   research_group_column: Research Group
-  abeta_status_column: AMYLOID_STATUS_FILLED
+  abeta_status_column: ABETA_CL_LABEL_monotonic
   allowed_research_groups: [CN, MCI, AD]
   disease_research_groups: [MCI, AD]
   abeta_negative_values: [0, negative]

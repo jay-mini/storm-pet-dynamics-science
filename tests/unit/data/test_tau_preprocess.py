@@ -19,13 +19,13 @@ def test_nearest_abeta_respects_window_and_tie_selects_earlier_date() -> None:
         {
             "PTID": ["A", "A", "B"],
             "SCANDATE": ["2020-01-08", "2020-01-12", "2021-01-01"],
-            "ABETA_GMM_LABEL": [0, 1, 1],
+            "ABETA_CL_LABEL": [0, 1, 1],
         }
     )
     result = merge_tau_with_nearest_abeta(tau, abeta, max_difference_days=180)
-    assert result.loc[0, "ABETA_GMM_LABEL_NEAREST_180D"] == 0
+    assert result.loc[0, "ABETA_CL_LABEL_NEAREST_180D"] == 0
     assert result.loc[0, "ABETA_MATCHED_DATE_180D"] == pd.Timestamp("2020-01-08")
-    assert np.isnan(result.loc[1, "ABETA_GMM_LABEL_NEAREST_180D"])
+    assert np.isnan(result.loc[1, "ABETA_CL_LABEL_NEAREST_180D"])
 
 
 def test_abeta_monotonic_correction_matches_legacy_rules() -> None:
@@ -33,12 +33,12 @@ def test_abeta_monotonic_correction_matches_legacy_rules() -> None:
         {
             "PTID": ["A"] * 5,
             "SCANDATE": pd.date_range("2020-01-01", periods=5),
-            "ABETA_GMM_LABEL": [np.nan, 0, np.nan, 1, 0],
+            "ABETA_CL_LABEL": [np.nan, 0, np.nan, 1, 0],
         }
     )
     corrected, before, after, _ = apply_abeta_monotonic_correction(data)
     np.testing.assert_allclose(
-        corrected["ABETA_GMM_LABEL_monotonic"].to_numpy(float),
+        corrected["ABETA_CL_LABEL_monotonic"].to_numpy(float),
         [0, 0, np.nan, 1, 1],
         equal_nan=True,
     )

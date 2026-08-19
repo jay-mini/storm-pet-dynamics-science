@@ -94,6 +94,12 @@ def build(manifest_path: Path, output_override: Path | None = None) -> Path:
         path.write_text(text, encoding="utf-8", newline="\n")
 
     problems = _scan(output)
+    required_release_files = {"LICENSE", "CITATION.cff"}
+    missing_release_files = sorted(
+        name for name in required_release_files if not (output / name).is_file()
+    )
+    if missing_release_files:
+        problems.extend(f"missing release file: {name}" for name in missing_release_files)
     if problems:
         raise RuntimeError("public release safety scan failed:\n- " + "\n- ".join(problems))
 
@@ -103,8 +109,8 @@ def build(manifest_path: Path, output_override: Path | None = None) -> Path:
         files[relative] = {"sha256": _sha256(path), "size_bytes": path.stat().st_size}
     release_manifest = {
         "schema_version": 1,
-        "publication_ready": False,
-        "publication_blocker": "Choose and add a source-code LICENSE.",
+        "publication_ready": True,
+        "license": "MIT",
         "file_count": len(files),
         "files": files,
     }

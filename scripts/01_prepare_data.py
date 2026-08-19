@@ -9,7 +9,7 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from storm_pet.data.pipeline import prepare_abeta_gmm_stage, prepare_tau_stage
+from storm_pet.data.pipeline import prepare_abeta_centiloid_stage, prepare_tau_stage
 
 
 def parse_args() -> argparse.Namespace:
@@ -33,7 +33,7 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     if args.modality == "abeta":
-        result = prepare_abeta_gmm_stage(args.input_csv, args.output_dir)
+        result = prepare_abeta_centiloid_stage(args.input_csv, args.output_dir)
     else:
         result = prepare_tau_stage(
             args.tau_csv,
@@ -51,4 +51,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
