@@ -69,6 +69,16 @@ python scripts/03_train_ot_cfm.py --config configs/ot_cfm/tau_paper.yaml --smoke
 The synthetic CSVs in `data/demo/` test new-scan input shape; they are not a substitute for an
 authorized training cohort and cannot reproduce paper estimates.
 
+## Main-text figures
+
+Compact figure source data, plotting code, and reference exports are in [`figures/`](figures/).
+Install the figure dependencies and reproduce every included main-text figure with:
+
+```powershell
+python -m pip install -e ".[figures]"
+python figures/reproduce_all.py
+```
+
 ## Scope and release status
 
 This tree is created from an explicit allowlist and has passed a local secret/path/artifact scan.

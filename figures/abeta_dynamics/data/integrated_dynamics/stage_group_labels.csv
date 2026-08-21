@@ -1,0 +1,6 @@
+observed_group,display_label
+stage0,s0
+bin0,s1-3
+bin1,s4-8
+bin2,s9-20
+bin3,s21-23

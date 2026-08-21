@@ -11,6 +11,15 @@
 5. `scripts/02_assign_stage_bins.py`
 6. `scripts/03_train_ot_cfm.py`
 
+## 正文图片复现
+
+正文图的精简源数据、绘图代码和参考导出文件位于 [`figures/`](figures/)。运行：
+
+```powershell
+python -m pip install -e ".[figures]"
+python figures/reproduce_all.py
+```
+
 命令示例和数据约定见英文 [README](README.md)。`data/demo/` 仅为合成输入格式示例，
 不能替代获授权队列，也不能复现论文数值。正式 SuStaIn 训练只产生正文使用的 full-data
 模型；CV 与 Appendix 不在本公开范围。

@@ -79,7 +79,7 @@ class AutoEncoder(nn.Module):
     def __init__(
         self,
         input_dim: int,
-        latent_dim: int = 8,
+        latent_dim: int = 16,
         hidden_width: int = 128,
         n_subtypes: int = 2,
         n_bins: int = 4,
